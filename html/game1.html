@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game 1 - Catch the Ball</title>
+    <link rel="stylesheet" href="../css/games.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <h1>GameZone - Catch the Ball</h1>
+        <a href="../index.html" class="btn-back">Back to Home</a>
+    </header>
+
+    <!-- Game Area -->
+    <main>
+        <section class="game-container">
+            <h2>Catch the Ball!</h2>
+            <p>Click on the ball as it moves around the screen to earn points!</p>
+
+            <!-- Difficulty Selector -->
+            <div class="difficulty">
+                <label for="difficulty">Select Difficulty:</label>
+                <select id="difficulty">
+                    <option value="easy">Easy</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="hard">Hard</option>
+                </select>
+            </div>
+
+            <!-- Timer and Game Area -->
+            <div class="game-area" id="gameArea">
+                <div class="ball" id="ball"></div>
+            </div>
+            <div class="game-info">
+                <p>Score: <span id="score">0</span></p>
+                <p>Time Left: <span id="timeLeft">30</span> seconds</p>
+                <button id="startGame" class="btn-primary">Start Game</button>
+            </div>
+
+            <!-- Leaderboard -->
+            <div class="leaderboard">
+                <h3>Leaderboard</h3>
+                <table id="leaderboardTable">
+                    <tr>
+                        <th>Level</th>
+                        <th>Player</th>
+                        <th>Score</th>
+                    </tr>
+                    <!-- Dynamic rows will be added here -->
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Sound Effects -->
+    <audio id="clickSound" src="../static/audio/click.mp3"></audio>
+    <audio id="gameOverSound" src="../static/audio/game-over.mp3"></audio>
+
+    <script src="../js/game1.js"></script>
+</body>
+</html>

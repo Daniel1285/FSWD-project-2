@@ -1,0 +1,66 @@
+/* Global Variables */
+@import url('colors.css');
+
+nav ul li {
+    list-style: none;
+}
+.btn-back {
+    background-color: var(--accent-color);
+    color: var(--white);
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.btn-back:hover {
+    background-color: darkorange;
+}
+
+/* Leaderboard Layout */
+.leaderboard-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    padding: 1rem;
+}
+
+.leaderboard-tables {
+    flex: 3; /* Wide section for tables */
+}
+
+.leaderboard-tables h3 {
+    margin-top: 1rem;
+}
+
+.leaderboard-summary {
+    flex: 1; /* Narrow section for summary */
+    background-color: var(--light-gray);
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px var(--shadow-color);
+}
+
+#leaderboardTableGame1,
+#leaderboardTableGame2 {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+}
+
+#leaderboardTableGame1 th,
+#leaderboardTableGame2 th,
+#leaderboardTableGame1 td,
+#leaderboardTableGame2 td {
+    border: 1px solid var(--light-gray);
+    padding: 0.5rem;
+    text-align: center;
+}
+
+#leaderboardTableGame1 th,
+#leaderboardTableGame2 th {
+    background-color: var(--primary-color);
+    color: white;
+}

@@ -1,0 +1,26 @@
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--primary-color);
+  color: var(--white);
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 5px var(--shadow-color);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  min-height: 9vh;
+}
+
+/* Footer */
+footer {
+  background-color: var(--light-gray);
+  padding: 1rem;
+  text-align: center;
+  color: var(--text-color);
+  margin-top: auto;
+}
+
+::-webkit-scrollbar {
+    display: none;
+  }
