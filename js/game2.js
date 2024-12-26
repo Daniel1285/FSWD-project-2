@@ -1,12 +1,22 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const modeSelection = document.querySelector('.mode-selection');
+    const gameContainer = document.querySelector('.game-container');
+    const singlePlayerBtn = document.getElementById('singlePlayerBtn');
+    const twoPlayerBtn = document.getElementById('twoPlayerBtn');
     const gameBoard = document.getElementById('gameBoard');
     const turnIndicator = document.getElementById('turnIndicator');
     const resetButton = document.getElementById('resetButton');
 
+
+    // Sound Effects
+    const clickSound = document.getElementById('clickSound');
+    const gameOverSound = document.getElementById('gameOverSound');
+    
     const ROWS = 6;
     const COLS = 7;
     let board = [];
     let currentPlayer = 'red';
+    let isSinglePlayer = false;
 
     // Initialize the board
     const initializeBoard = () => {
@@ -66,6 +76,82 @@ document.addEventListener('DOMContentLoaded', () => {
         return false;
     };
 
+    // AI Move Logic: Smarter AI
+const aiMove = () => {
+    // Helper to check if a move results in a win
+    const simulateMove = (row, col, player) => {
+        board[row][col] = player; // Simulate the move
+        const isWin = checkWin(row, col); // Check for a win
+        board[row][col] = null; // Undo the move
+        return isWin;
+    };
+
+    // Check for winning moves for AI
+    for (let col = 0; col < COLS; col++) {
+        for (let row = ROWS - 1; row >= 0; row--) {
+            if (!board[row][col]) {
+                if (simulateMove(row, col, 'yellow')) {
+                    board[row][col] = 'yellow';
+
+                    // Update the UI
+                    const cell = gameBoard.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
+                    const disc = document.createElement('div');
+                    disc.classList.add('disc', 'yellow');
+                    cell.appendChild(disc);
+
+                    turnIndicator.textContent = 'AI wins!';
+                    gameBoard.removeEventListener('click', handleCellClick);
+                    return;
+                }
+                break;
+            }
+        }
+    }
+
+    // Check for blocking moves against Player 1
+    for (let col = 0; col < COLS; col++) {
+        for (let row = ROWS - 1; row >= 0; row--) {
+            if (!board[row][col]) {
+                if (simulateMove(row, col, 'red')) {
+                    board[row][col] = 'yellow';
+
+                    // Update the UI
+                    const cell = gameBoard.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
+                    const disc = document.createElement('div');
+                    disc.classList.add('disc', 'yellow');
+                    cell.appendChild(disc);
+
+                    // Switch players
+                    currentPlayer = 'red';
+                    turnIndicator.textContent = "Player 1's turn (Red)";
+                    return;
+                }
+                break;
+            }
+        }
+    }
+
+    // Fallback: Choose the first available column
+    for (let col = 0; col < COLS; col++) {
+        for (let row = ROWS - 1; row >= 0; row--) {
+            if (!board[row][col]) {
+                board[row][col] = 'yellow';
+
+                // Update the UI
+                const cell = gameBoard.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
+                const disc = document.createElement('div');
+                disc.classList.add('disc', 'yellow');
+                cell.appendChild(disc);
+
+                // Switch players
+                currentPlayer = 'red';
+                turnIndicator.textContent = "Player 1's turn (Red)";
+                return;
+            }
+        }
+    }
+};
+
     // Handle cell click
     const handleCellClick = (e) => {
         const col = parseInt(e.target.dataset.col);
@@ -81,16 +167,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 disc.classList.add('disc', currentPlayer);
                 cell.appendChild(disc);
 
+                // Play sound for placing a disc
+                clickSound.play();
+
                 // Check for a win
                 if (checkWin(row, col)) {
                     turnIndicator.textContent = `Player ${currentPlayer === 'red' ? 1 : 2} wins!`;
+                    
+                    // Play game-over sound
+                    gameOverSound.play(); 
                     gameBoard.removeEventListener('click', handleCellClick);
                     return;
                 }
 
                 // Switch players
                 currentPlayer = currentPlayer === 'red' ? 'yellow' : 'red';
-                turnIndicator.textContent = `Player ${currentPlayer === 'red' ? 1 : 2}'s turn (${currentPlayer})`;
+                turnIndicator.textContent = `Player ${currentPlayer === 'red' ? 1 : 'AI'}'s turn (${currentPlayer})`;
+
+                if (isSinglePlayer && currentPlayer === 'yellow') {
+                    setTimeout(aiMove, 500); // AI move delay
+                }
 
                 return;
             }
@@ -109,5 +205,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize the game
     initializeBoard();
+
+    // Mode Selection
+    singlePlayerBtn.addEventListener('click', () => {
+        isSinglePlayer = true;
+        modeSelection.style.display = 'none';
+        gameContainer.style.display = 'block';
+    });
+
+    twoPlayerBtn.addEventListener('click', () => {
+        isSinglePlayer = false;
+        modeSelection.style.display = 'none';
+        gameContainer.style.display = 'block';
+    });
+
     gameBoard.addEventListener('click', handleCellClick);
 });

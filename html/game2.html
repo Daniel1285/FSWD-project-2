@@ -6,6 +6,7 @@
     <title>Game 2 - 4 in a Row</title>
     <link rel="stylesheet" href="../css/game2.css">
     <link rel="stylesheet" href="../css/style.css">
+
 </head>
 <body>
     <!-- Header -->
@@ -14,11 +15,18 @@
         <a href="../index.html" class="btn-back">Back to Home</a>
     </header>
 
+    <!-- Mode Selection -->
+    <section class="mode-selection">
+        <h2>Choose Game Mode</h2>
+        <button id="singlePlayerBtn" class="btn-primary">Single Player</button>
+        <button id="twoPlayerBtn" class="btn-primary">Two Players</button>
+    </section>
+
     <!-- Game Area -->
-    <main class="game-container">
+    <main class="game-container" style="display: none;">
         <section>
             <h2>How to Play</h2>
-            <p>Players take turns dropping their discs into one of the seven columns. The first player to align four of their discs horizontally, vertically, or diagonally wins the game!</p>
+            <p>Drop your discs into the grid. Connect four discs in a row, column, or diagonal to win!</p>
         </section>
         
         <section class="game-area">
@@ -29,6 +37,10 @@
         <button id="resetButton" class="btn-primary">Reset Game</button>
     </main>
 
+    <!-- Sound Effects -->
+    <audio id="clickSound" src="../static/audio/click.mp3"></audio>
+    <audio id="gameOverSound" src="../static/audio/game-over.mp3"></audio>
+    
     <script src="../js/game2.js"></script>
 </body>
 </html>
