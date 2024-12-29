@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <td>${level}</td>
                             <td>${entry.name}</td>
                             <td>${entry.score}</td>
+                            <td>${entry.date || 'N/A'}</td>
                         `;
                         tableElement.appendChild(row);
                     });
@@ -37,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (allScores.length === 0) return `<p>No scores yet for ${gameName}.</p>`;
 
         const topPlayer = allScores.reduce((max, player) => (player.score > max.score ? player : max));
-        return `<p>Top Player for ${gameName}: <strong>${topPlayer.name}</strong> with a score of <strong>${topPlayer.score}</strong>.</p>`;
+        return `<p>Top Player for ${gameName}: <strong>${topPlayer.name}</strong> with a score of <strong>${topPlayer.score}</strong> on <strong>${topPlayer.date || 'N/A'}</strong>.</p>`;
     };
 
     const game1Summary = generateSummary(game1Leaderboard, 'Game 1');

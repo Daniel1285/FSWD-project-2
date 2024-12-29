@@ -14,7 +14,7 @@ let score = 0;
 let timeLeft = 30;
 let gameInterval;
 let timerInterval;
-let moveInterval = 800; 
+let moveInterval = 800;
 
 // Load Leaderboard
 let leaderboard = JSON.parse(localStorage.getItem('leaderboardGame1')) || {
@@ -38,6 +38,7 @@ function updateLeaderboard() {
             <th>Level</th>
             <th>Player</th>
             <th>Score</th>
+            <th>Date</th>
         </tr>
     `;
 
@@ -53,6 +54,7 @@ function updateLeaderboard() {
                         <td>${level}</td>
                         <td>${entry.name}</td>
                         <td>${entry.score}</td>
+                        <td>${entry.date || 'N/A'}</td>
                     `;
                     leaderboardTable.appendChild(row);
                 });
@@ -141,6 +143,7 @@ function saveScore(score) {
 
     const difficulty = difficultySelect.value.charAt(0).toUpperCase() + difficultySelect.value.slice(1); // Capitalize difficulty
     const levelScores = leaderboard[difficulty];
+    const currentDate = new Date().toLocaleString(); // Get current date and time
 
     // Update leaderboard with the current user's score
     const existingEntry = levelScores.find((entry) => entry.name === currentUser);
@@ -149,10 +152,11 @@ function saveScore(score) {
         // Update the score if the new score is higher
         if (score > existingEntry.score) {
             existingEntry.score = score;
+            existingEntry.date = currentDate; // Update date
         }
     } else {
         // Add a new entry for the current user
-        levelScores.push({ name: currentUser, score });
+        levelScores.push({ name: currentUser, score, date: currentDate });
     }
 
     // Save the updated leaderboard to localStorage
@@ -167,7 +171,6 @@ function resetLeaderboard() {
     updateLeaderboard();
     alert('Leaderboard has been reset.');
 }
-
 
 // Initialize Leaderboard on Load
 updateLeaderboard();

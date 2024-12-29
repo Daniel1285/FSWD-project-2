@@ -1,24 +1,29 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const modeSelection = document.querySelector('.mode-selection');
-    const gameContainer = document.querySelector('.game-container');
-    const singlePlayerBtn = document.getElementById('singlePlayerBtn');
-    const twoPlayerBtn = document.getElementById('twoPlayerBtn');
+    // DOM Elements
     const gameBoard = document.getElementById('gameBoard');
+    const leaderboardTable = document.getElementById('leaderboardTable');
     const turnIndicator = document.getElementById('turnIndicator');
     const resetButton = document.getElementById('resetButton');
-
-
-    // Sound Effects
+    const startButton = document.getElementById('startButton');
+    const difficultySelect = document.getElementById('difficulty');
     const clickSound = document.getElementById('clickSound');
+    const startSound = document.getElementById('startSound');
     const gameOverSound = document.getElementById('gameOverSound');
-    
+
+    // Game Variables
     const ROWS = 6;
     const COLS = 7;
     let board = [];
     let currentPlayer = 'red';
-    let isSinglePlayer = false;
+    let currentDifficulty = 'medium'; // Default difficulty
+    let isGameActive = false;
+    let leaderboard = JSON.parse(localStorage.getItem('leaderboardGame2')) || {
+        Easy: [],
+        Medium: [],
+        Hard: []
+    };
 
-    // Initialize the board
+    // Initialize Board
     const initializeBoard = () => {
         board = Array(ROWS).fill(null).map(() => Array(COLS).fill(null));
         gameBoard.innerHTML = '';
@@ -33,7 +38,125 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Check for a win condition
+    // Initialize Game
+    const initializeGame = () => {
+        initializeBoard();
+        isGameActive = false;
+        turnIndicator.textContent = "Click 'Start Game' to begin";
+    };
+
+    // Handle Start Button Click
+    startButton.addEventListener('click', () => {
+        const currentUser = localStorage.getItem('currentUser');
+        if (!currentUser) {
+            alert('You must be logged in to play the game!');
+            return;
+        }
+        startSound.play();
+        isGameActive = true;
+        turnIndicator.textContent = "Player 1's turn (Red)";
+    });
+
+    // Handle Difficulty Change
+    difficultySelect.addEventListener('change', (e) => {
+        currentDifficulty = e.target.value.toLowerCase();
+    });
+
+    // Handle Cell Click
+    const handleCellClick = (e) => {
+        if (!isGameActive) {
+            return;
+        }
+
+        const col = parseInt(e.target.dataset.col);
+
+        for (let row = ROWS - 1; row >= 0; row--) {
+            if (!board[row][col]) {
+                board[row][col] = currentPlayer;
+
+                const cell = gameBoard.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
+                const disc = document.createElement('div');
+                disc.classList.add('disc', currentPlayer);
+                cell.appendChild(disc);
+
+                clickSound.play();
+
+                if (checkWin(row, col)) {
+                    turnIndicator.textContent = currentPlayer === 'red' ? 'Player 1 wins!' : 'AI wins!';
+                    gameOverSound.play();
+                    isGameActive = false; // Stop gameplay after a win
+                    saveScore();
+                    return;
+                }
+
+                currentPlayer = currentPlayer === 'red' ? 'yellow' : 'red';
+                turnIndicator.textContent = `Player ${currentPlayer === 'red' ? 1 : 'AI'}'s turn (${currentPlayer})`;
+
+                if (currentPlayer === 'yellow') {
+                    setTimeout(aiMove, 500);
+                }
+                return;
+            }
+        }
+
+        alert('This column is full!');
+    };
+
+    // AI Move Logic
+    const aiMove = () => {
+        const simulateMove = (row, col, player) => {
+            board[row][col] = player;
+            const isWin = checkWin(row, col);
+            board[row][col] = null;
+            return isWin;
+        };
+
+        const availableColumns = [];
+        for (let col = 0; col < COLS; col++) {
+            for (let row = ROWS - 1; row >= 0; row--) {
+                if (!board[row][col]) {
+                    availableColumns.push({ row, col });
+                    break;
+                }
+            }
+        }
+
+        let selectedMove;
+
+        if (currentDifficulty === 'easy') {
+            // Random move
+            selectedMove = availableColumns[Math.floor(Math.random() * availableColumns.length)];
+        } else if (currentDifficulty === 'medium') {
+            // Block or random move
+            selectedMove = availableColumns.find(({ row, col }) => simulateMove(row, col, 'red')) ||
+                availableColumns[Math.floor(Math.random() * availableColumns.length)];
+        } else if (currentDifficulty === 'hard') {
+            // Winning, blocking, or strategic move
+            selectedMove = availableColumns.find(({ row, col }) => simulateMove(row, col, 'yellow')) ||
+                availableColumns.find(({ row, col }) => simulateMove(row, col, 'red')) ||
+                availableColumns.find(({ col }) => col === Math.floor(COLS / 2)) ||
+                availableColumns[Math.floor(Math.random() * availableColumns.length)];
+        }
+
+        if (selectedMove) {
+            const { row, col } = selectedMove;
+            board[row][col] = 'yellow';
+
+            const cell = gameBoard.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
+            const disc = document.createElement('div');
+            disc.classList.add('disc', 'yellow');
+            cell.appendChild(disc);
+
+            if (checkWin(row, col)) {
+                turnIndicator.textContent = 'AI wins!';
+                gameOverSound.play();
+                isGameActive = false; // Stop gameplay after a win
+            }
+            currentPlayer = 'red';
+        }
+    };
+
+    // Check Win Condition (unchanged)
     const checkWin = (row, col) => {
         const directions = [
             { dr: 0, dc: 1 }, // Horizontal
@@ -43,11 +166,9 @@ document.addEventListener('DOMContentLoaded', () => {
         ];
 
         const player = board[row][col];
-
         for (const { dr, dc } of directions) {
             let count = 1;
 
-            // Check in one direction
             for (let i = 1; i < 4; i++) {
                 const r = row + dr * i;
                 const c = col + dc * i;
@@ -58,7 +179,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            // Check in the opposite direction
             for (let i = 1; i < 4; i++) {
                 const r = row - dr * i;
                 const c = col - dc * i;
@@ -69,155 +189,72 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            if (count >= 4) {
-                return true;
-            }
+            if (count >= 4) return true;
         }
         return false;
     };
 
-    // AI Move Logic: Smarter AI
-const aiMove = () => {
-    // Helper to check if a move results in a win
-    const simulateMove = (row, col, player) => {
-        board[row][col] = player; // Simulate the move
-        const isWin = checkWin(row, col); // Check for a win
-        board[row][col] = null; // Undo the move
-        return isWin;
+    // Save Score (unchanged)
+    const saveScore = () => {
+        const currentUser = localStorage.getItem('currentUser') || 'Anonymous';
+        const date = new Date().toLocaleString();
+
+        const levelKey = currentDifficulty.charAt(0).toUpperCase() + currentDifficulty.slice(1);
+        let levelScores = leaderboard[levelKey];
+
+        if (!levelScores) {
+            levelScores = [];
+            leaderboard[levelKey] = levelScores;
+        }
+
+        const existingEntry = levelScores.find(entry => entry.name === currentUser);
+
+        if (existingEntry) {
+            existingEntry.score++;
+            existingEntry.date = date;
+        } else {
+            levelScores.push({ name: currentUser, score: 1, date });
+        }
+
+        localStorage.setItem('leaderboardGame2', JSON.stringify(leaderboard));
+        updateLeaderboard();
     };
 
-    // Check for winning moves for AI
-    for (let col = 0; col < COLS; col++) {
-        for (let row = ROWS - 1; row >= 0; row--) {
-            if (!board[row][col]) {
-                if (simulateMove(row, col, 'yellow')) {
-                    board[row][col] = 'yellow';
+    // Update Leaderboard (unchanged)
+    const updateLeaderboard = () => {
+        leaderboardTable.innerHTML = `
+            <tr>
+                <th>Level</th>
+                <th>Player</th>
+                <th>Score</th>
+                <th>Date</th>
+            </tr>
+        `;
 
-                    // Update the UI
-                    const cell = gameBoard.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
-                    const disc = document.createElement('div');
-                    disc.classList.add('disc', 'yellow');
-                    cell.appendChild(disc);
-
-                    turnIndicator.textContent = 'AI wins!';
-                    gameBoard.removeEventListener('click', handleCellClick);
-                    return;
-                }
-                break;
+        for (const level of ['Easy', 'Medium', 'Hard']) {
+            if (Array.isArray(leaderboard[level])) {
+                leaderboard[level]
+                    .sort((a, b) => b.score - a.score)
+                    .slice(0, 5)
+                    .forEach(entry => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${level}</td>
+                            <td>${entry.name}</td>
+                            <td>${entry.score}</td>
+                            <td>${entry.date || 'N/A'}</td>
+                        `;
+                        leaderboardTable.appendChild(row);
+                    });
             }
         }
-    }
-
-    // Check for blocking moves against Player 1
-    for (let col = 0; col < COLS; col++) {
-        for (let row = ROWS - 1; row >= 0; row--) {
-            if (!board[row][col]) {
-                if (simulateMove(row, col, 'red')) {
-                    board[row][col] = 'yellow';
-
-                    // Update the UI
-                    const cell = gameBoard.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
-                    const disc = document.createElement('div');
-                    disc.classList.add('disc', 'yellow');
-                    cell.appendChild(disc);
-
-                    // Switch players
-                    currentPlayer = 'red';
-                    turnIndicator.textContent = "Player 1's turn (Red)";
-                    return;
-                }
-                break;
-            }
-        }
-    }
-
-    // Fallback: Choose the first available column
-    for (let col = 0; col < COLS; col++) {
-        for (let row = ROWS - 1; row >= 0; row--) {
-            if (!board[row][col]) {
-                board[row][col] = 'yellow';
-
-                // Update the UI
-                const cell = gameBoard.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
-                const disc = document.createElement('div');
-                disc.classList.add('disc', 'yellow');
-                cell.appendChild(disc);
-
-                // Switch players
-                currentPlayer = 'red';
-                turnIndicator.textContent = "Player 1's turn (Red)";
-                return;
-            }
-        }
-    }
-};
-
-    // Handle cell click
-    const handleCellClick = (e) => {
-        const col = parseInt(e.target.dataset.col);
-
-        // Find the lowest empty cell in the column
-        for (let row = ROWS - 1; row >= 0; row--) {
-            if (!board[row][col]) {
-                board[row][col] = currentPlayer;
-
-                // Update the UI
-                const cell = gameBoard.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
-                const disc = document.createElement('div');
-                disc.classList.add('disc', currentPlayer);
-                cell.appendChild(disc);
-
-                // Play sound for placing a disc
-                clickSound.play();
-
-                // Check for a win
-                if (checkWin(row, col)) {
-                    turnIndicator.textContent = `Player ${currentPlayer === 'red' ? 1 : 2} wins!`;
-                    
-                    // Play game-over sound
-                    gameOverSound.play(); 
-                    gameBoard.removeEventListener('click', handleCellClick);
-                    return;
-                }
-
-                // Switch players
-                currentPlayer = currentPlayer === 'red' ? 'yellow' : 'red';
-                turnIndicator.textContent = `Player ${currentPlayer === 'red' ? 1 : 'AI'}'s turn (${currentPlayer})`;
-
-                if (isSinglePlayer && currentPlayer === 'yellow') {
-                    setTimeout(aiMove, 500); // AI move delay
-                }
-
-                return;
-            }
-        }
-
-        alert('This column is full!');
     };
 
-    // Reset the game
-    resetButton.addEventListener('click', () => {
-        initializeBoard();
-        currentPlayer = 'red';
-        turnIndicator.textContent = `Player 1's turn (Red)`;
-        gameBoard.addEventListener('click', handleCellClick);
-    });
-
-    // Initialize the game
-    initializeBoard();
-
-    // Mode Selection
-    singlePlayerBtn.addEventListener('click', () => {
-        isSinglePlayer = true;
-        modeSelection.style.display = 'none';
-        gameContainer.style.display = 'block';
-    });
-
-    twoPlayerBtn.addEventListener('click', () => {
-        isSinglePlayer = false;
-        modeSelection.style.display = 'none';
-        gameContainer.style.display = 'block';
-    });
-
+    // Add Event Listeners
     gameBoard.addEventListener('click', handleCellClick);
+    resetButton.addEventListener('click', initializeGame);
+
+    // Start the game on page load
+    initializeGame();
+    updateLeaderboard();
 });

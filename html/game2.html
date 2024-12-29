@@ -3,44 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game 2 - 4 in a Row</title>
+    <title>4 in a Row</title>
+    <link rel="stylesheet" href="../css/games.css">
     <link rel="stylesheet" href="../css/game2.css">
     <link rel="stylesheet" href="../css/style.css">
-
 </head>
 <body>
-    <!-- Header -->
     <header>
         <h1>4 in a Row</h1>
         <a href="../index.html" class="btn-back">Back to Home</a>
     </header>
 
-    <!-- Mode Selection -->
-    <section class="mode-selection">
-        <h2>Choose Game Mode</h2>
-        <button id="singlePlayerBtn" class="btn-primary">Single Player</button>
-        <button id="twoPlayerBtn" class="btn-primary">Two Players</button>
+    <!-- Difficulty Selection -->
+    <section class="difficulty-selection">
+        <h2>Select AI Difficulty</h2>
+        <select id="difficulty">
+            <option value="easy">Easy</option>
+            <option value="medium" selected>Medium</option>
+            <option value="hard">Hard</option>
+        </select>
     </section>
 
     <!-- Game Area -->
-    <main class="game-container" style="display: none;">
-        <section>
-            <h2>How to Play</h2>
-            <p>Drop your discs into the grid. Connect four discs in a row, column, or diagonal to win!</p>
-        </section>
-        
-        <section class="game-area">
+    <main class="game-container">
+        <div class="board-container">
             <div id="gameBoard" class="board"></div>
-            <p id="turnIndicator">Player 1's turn (Red)</p>
-        </section>
-        
+        </div>
+        <p id="turnIndicator">Player 1's turn (Red)</p>
+        <button id="startButton" class="btn-primary">Start Game</button>
         <button id="resetButton" class="btn-primary">Reset Game</button>
+
+        <!-- Leaderboard -->
+        <div class="leaderboard">
+            <h3>Leaderboard</h3>
+            <table id="leaderboardTable">
+                <tr>
+                    <th>Level</th>
+                    <th>Player</th>
+                    <th>Score</th>
+                    <th>Date</th>
+                </tr>
+                <!-- Dynamic rows will be added here -->
+            </table>
+        </div>
     </main>
 
     <!-- Sound Effects -->
+    <audio id="startSound" src="../static/audio/game-start.mp3"></audio>
     <audio id="clickSound" src="../static/audio/click.mp3"></audio>
     <audio id="gameOverSound" src="../static/audio/game-over.mp3"></audio>
-    
+
     <script src="../js/game2.js"></script>
 </body>
 </html>

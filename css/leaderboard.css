@@ -54,6 +54,7 @@ nav ul li {
 #leaderboardTableGame2 th,
 #leaderboardTableGame1 td,
 #leaderboardTableGame2 td {
+    width: 25%;
     border: 1px solid var(--light-gray);
     padding: 0.5rem;
     text-align: center;
