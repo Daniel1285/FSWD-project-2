@@ -41,8 +41,8 @@ document.addEventListener('DOMContentLoaded', () => {
         return `<p>Top Player for ${gameName}: <strong>${topPlayer.name}</strong> with a score of <strong>${topPlayer.score}</strong> on <strong>${topPlayer.date || 'N/A'}</strong>.</p>`;
     };
 
-    const game1Summary = generateSummary(game1Leaderboard, 'Game 1');
-    const game2Summary = generateSummary(game2Leaderboard, 'Game 2');
+    const game1Summary = generateSummary(game1Leaderboard, 'Catch the Ball');
+    const game2Summary = generateSummary(game2Leaderboard, '4 in Row');
 
     summaryContent.innerHTML = `
         ${game1Summary}

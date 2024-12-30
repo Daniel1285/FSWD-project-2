@@ -1,5 +1,10 @@
 @import url('colors.css');
 
+body{
+    margin: 0;
+    padding: 0;
+    
+}
 /* Buttons */
 .btn-primary, .btn-back {
     padding: 0.8rem 1.5rem;
@@ -48,6 +53,7 @@
 
 /* Leaderboard */
 .leaderboard {
+    width: 50%;
     margin-top: 2rem;
     text-align: center;
 }
@@ -63,6 +69,7 @@
     margin: 0 auto;
     border-collapse: collapse;
     font-size: 1rem;
+    margin-bottom: 2rem;
 }
 
 #leaderboardTable th,

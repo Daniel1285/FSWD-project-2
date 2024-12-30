@@ -1,5 +1,9 @@
 @import url(colors.css);
 
+
+.difficulty-selection{
+    margin-left: 1rem;
+}
 .btn-back {
     display: inline-block;
     margin-top: 1rem;
@@ -86,4 +90,8 @@
 
 .btn-primary:hover {
     background-color: var(--hover-color);
+}
+
+.leaderboard{
+    width: 100%;
 }

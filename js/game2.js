@@ -85,7 +85,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     turnIndicator.textContent = currentPlayer === 'red' ? 'Player 1 wins!' : 'AI wins!';
                     gameOverSound.play();
                     isGameActive = false; // Stop gameplay after a win
-                
                     saveScore();
                     return;
                 }
@@ -191,7 +190,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (count >= 4) {
-                initializeGame()
                 return true;
             }
         }
