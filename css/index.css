@@ -186,7 +186,7 @@ main {
 }
 
 .popup input {
-    width: 100%;
+    width: 90%;
     padding: 0.8rem;
     margin: 0.5rem 0;
     border: 1px solid var(--light-gray);

@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 turnIndicator.textContent = currentPlayer == 'red' ? 'Player 1\'s turn' : 'AI\'s turn';
 
                 if (currentPlayer === 'yellow') {
-                    setTimeout(aiMove, 500);
+                    setTimeout(aiMove, 800);
                 }
                 return;
             }

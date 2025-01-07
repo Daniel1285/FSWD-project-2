@@ -14,7 +14,7 @@ let score = 0;
 let timeLeft = 30;
 let gameInterval;
 let timerInterval;
-let moveInterval = 800;
+let moveInterval = 800; // Medium level
 
 // Load Leaderboard
 let leaderboard = JSON.parse(localStorage.getItem('leaderboardGame1')) || {

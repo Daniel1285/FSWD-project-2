@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Login Logic
 if (loginForm) {
     loginForm.onsubmit = function (e) {
-        e.preventDefault();
+        // e.preventDefault();
 
         const username = document.getElementById('login-username').value.trim();
         const password = document.getElementById('login-password').value.trim();
@@ -104,7 +104,7 @@ if (loginForm) {
     // Registration Logic
     if (registerForm) {
         registerForm.onsubmit = function (e) {
-            e.preventDefault();
+            // e.preventDefault();
             const username = document.getElementById('register-username').value.trim().toLowerCase();
             const email = document.getElementById('register-email').value.trim().toLowerCase();
             const password = document.getElementById('register-password').value.trim();
