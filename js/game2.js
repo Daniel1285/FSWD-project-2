@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         startSound.play();
         isGameActive = true;
-        turnIndicator.textContent = "Player 1's turn (Red)";
+        turnIndicator.textContent = "Player 1's turn";
     });
 
     // Handle Difficulty Change
@@ -84,13 +84,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (checkWin(row, col)) {
                     turnIndicator.textContent = currentPlayer === 'red' ? 'Player 1 wins!' : 'AI wins!';
                     gameOverSound.play();
-                    isGameActive = false; // Stop gameplay after a win
+                    isGameActive = false;
                     saveScore();
                     return;
                 }
 
                 currentPlayer = currentPlayer === 'red' ? 'yellow' : 'red';
-                turnIndicator.textContent = `Player ${currentPlayer === 'red' ? 1 : 'AI'}'s turn (${currentPlayer})`;
+                turnIndicator.textContent = currentPlayer == 'red' ? 'Player 1\'s turn' : 'AI\'s turn';
 
                 if (currentPlayer === 'yellow') {
                     setTimeout(aiMove, 500);
@@ -150,7 +150,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (checkWin(row, col)) {
                 turnIndicator.textContent = 'AI wins!';
                 gameOverSound.play();
-                isGameActive = false; // Stop gameplay after a win
+                isGameActive = false;
+            }
+            else{
+                turnIndicator.textContent = 'Player 1\'s turn';
             }
             currentPlayer = 'red';
         }
@@ -166,6 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ];
 
         const player = board[row][col];
+        //console.log(`player: ${currentPlayer}`,row, col)
         for (const { dr, dc } of directions) {
             let count = 1;
 
@@ -174,6 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const c = col + dc * i;
                 if (r >= 0 && r < ROWS && c >= 0 && c < COLS && board[r][c] === player) {
                     count++;
+                    console.log(`count for ${currentPlayer} = ${count}`)
                 } else {
                     break;
                 }

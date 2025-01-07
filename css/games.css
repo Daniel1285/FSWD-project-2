@@ -3,8 +3,9 @@
 body{
     margin: 0;
     padding: 0;
-    
+    background: linear-gradient(to bottom right, var(--primary-color), var(--secondary-color));;
 }
+
 /* Buttons */
 .btn-primary, .btn-back {
     padding: 0.8rem 1.5rem;
@@ -35,8 +36,15 @@ body{
 
 /* Difficulty Selector */
 .difficulty, .difficulty-selection {
-    margin: 1rem 0;
-    font-size: 1.1rem;
+    background: linear-gradient(135deg, #4e54c8, #8f94fb);
+    color: #fff;
+    text-align: center;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 300px;
+    margin: 50px auto;
+    font-family: 'Arial', sans-serif;
 }
 
 .difficulty label, .difficulty-selection h2 {
@@ -49,6 +57,33 @@ body{
     border: 1px solid var(--light-gray);
     border-radius: 4px;
     font-size: 1rem;
+}
+
+#difficulty{
+    width: 80%;
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #fff;
+    border-radius: 8px;
+    background: #fff;
+    color: #4e54c8;
+    outline: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+/* Dropdown hover and focus effects */
+#difficulty:hover,
+#difficulty:focus {
+    border-color: #8f94fb;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    
+}
+
+/* Dropdown option styling */
+#difficulty option {
+    background-color: #fff;
+    color: #4e54c8;
+    text-align: center;
 }
 
 /* Leaderboard */

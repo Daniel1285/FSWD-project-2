@@ -51,25 +51,56 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     // Login Logic
-    if (loginForm) {
-        loginForm.onsubmit = function (e) {
-            e.preventDefault();
-            const username = document.getElementById('login-username').value.trim();
-            const password = document.getElementById('login-password').value.trim();
+if (loginForm) {
+    loginForm.onsubmit = function (e) {
+        e.preventDefault();
 
-            const userData = JSON.parse(localStorage.getItem(username.toLowerCase()));
+        const username = document.getElementById('login-username').value.trim();
+        const password = document.getElementById('login-password').value.trim();
+        const normalizedUsername = username.toLowerCase();
 
-            if (userData && userData.password === password) {
-                alert('Login successful!');
-                localStorage.setItem('currentUser', username.toLowerCase());
-                loginPopup.classList.remove('active'); // Close the login popup
-                location.reload(); // Refresh the page
+        // Retrieve user data and block-related information from localStorage
+        const userData = JSON.parse(localStorage.getItem(normalizedUsername));
+        const failedAttempts = JSON.parse(localStorage.getItem(`${normalizedUsername}_failedAttempts`)) || 0;
+        const blockUntil = JSON.parse(localStorage.getItem(`${normalizedUsername}_blockUntil`)) || 0;
+        const currentTime = Date.now();
+
+        // Check if the user is currently blocked
+        if (currentTime < blockUntil) {
+            const remainingTime = Math.ceil((blockUntil - currentTime) / 1000); // Remaining time in seconds
+            alert(`Too many failed attempts! Please try again in ${remainingTime} seconds.`);
+            return;
+        }
+
+        // If user was blocked but the block period has expired, reset failed attempts
+        if (currentTime >= blockUntil && failedAttempts >= 3) {
+            localStorage.removeItem(`${normalizedUsername}_failedAttempts`);
+            localStorage.removeItem(`${normalizedUsername}_blockUntil`);
+        }
+
+        if (userData && userData.password === password) {
+            alert('Login successful!');
+            localStorage.setItem('currentUser', normalizedUsername);
+            localStorage.removeItem(`${normalizedUsername}_failedAttempts`); // Reset failed attempts on success
+            localStorage.removeItem(`${normalizedUsername}_blockUntil`);    // Remove block time if it exists
+            loginPopup.classList.remove('active'); // Close the login popup
+            location.reload(); // Refresh the page
+        } else {
+            const newFailedAttempts = failedAttempts + 1;
+            const maxFailures = 3;
+            if (newFailedAttempts >= maxFailures) {
+                const blockDuration = 60 * 1000; // 1 minute in milliseconds
+                const unblockTime = currentTime + blockDuration;
+                localStorage.setItem(`${normalizedUsername}_blockUntil`, JSON.stringify(unblockTime));
+                alert('Too many failed attempts! You are blocked for 1 minute.');
             } else {
-                alert('Invalid credentials!');
+                alert(`Invalid credentials! You have ${maxFailures - newFailedAttempts} attempts left.`);
             }
-        };
-    }
 
+            localStorage.setItem(`${normalizedUsername}_failedAttempts`, JSON.stringify(newFailedAttempts));
+        }
+    };
+}
     // Registration Logic
     if (registerForm) {
         registerForm.onsubmit = function (e) {

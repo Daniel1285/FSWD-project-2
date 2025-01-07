@@ -110,7 +110,7 @@ function moveBall() {
 ball.addEventListener('click', () => {
     score++;
     scoreDisplay.textContent = score;
-    clickSound.play(); // Play click sound
+    clickSound.play(); 
 });
 
 // Start Timer
@@ -118,7 +118,6 @@ function startTimer() {
     timerInterval = setInterval(() => {
         timeLeft--;
         timeLeftDisplay.textContent = timeLeft;
-
         if (timeLeft <= 0) {
             endGame();
         }

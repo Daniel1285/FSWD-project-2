@@ -1,8 +1,7 @@
 @import url(colors.css);
 
-
-.difficulty-selection{
-    margin-left: 1rem;
+.unique{
+    text-align: center;
 }
 .btn-back {
     display: inline-block;
@@ -37,6 +36,7 @@
     width: 100%;
     max-width: 600px;
     margin: 2rem auto;
+    border: 3px solid #024e04;
 }
 
 .cell {
@@ -61,14 +61,30 @@
     height: 100%;
     border-radius: 50%;
     background-color: transparent;
+    animation-duration: 0.9s; /* Adjust duration as needed */
+    animation-timing-function: ease-out;
 }
+
+@keyframes drop {
+    from {
+        transform: translateY(-500%);
+        opacity: 50%;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
 
 .disc.red {
     background-color: red;
+    animation-name: drop;
 }
 
 .disc.yellow {
     background-color: yellow;
+    animation-name: drop;
 }
 
 #turnIndicator {
